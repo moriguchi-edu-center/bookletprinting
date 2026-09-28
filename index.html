@@ -1,0 +1,2028 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小冊子印刷</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;600&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #efe6d4;
+    --bg-2: #e4d9c4;
+    --ink: #221c16;
+    --muted: #5e564c;
+    --card: #fffaf2;
+    --rule: #d5cbb8;
+    --seal: #9d341c;
+    --seal-deep: #7c2714;
+    --pine: #234e3b;
+    --pine-soft: #e7f2ec;
+    --warn-bg: #fff1d6;
+    --warn-ink: #6d4a10;
+    --shadow: 0 16px 40px rgba(60, 40, 16, 0.08);
+    --serif: "Shippori Mincho", "Yu Mincho", serif;
+    --sans: "IBM Plex Sans JP", "Yu Gothic", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    background:
+      linear-gradient(180deg, rgba(157, 52, 28, 0.08), transparent 220px),
+      var(--bg);
+  }
+  button, select { font-family: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; opacity: 0.45; }
+  button:focus-visible, select:focus-visible {
+    outline: 2px solid var(--seal);
+    outline-offset: 2px;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 64px; }
+
+  header.top {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-end;
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+  }
+  .brand { display: flex; gap: 14px; align-items: center; }
+  .brand h1 {
+    font-family: var(--serif);
+    font-size: 34px;
+    line-height: 1.1;
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .brand p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .job-tag {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--seal);
+    margin: 0 0 4px;
+  }
+
+  .hero-card, .panel {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+  }
+  .hero-card { padding: 36px 32px; max-width: 720px; }
+  .hero-card h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--seal);
+    letter-spacing: 0.16em;
+    font-size: 12px;
+  }
+  .muted { color: var(--muted); }
+  .small { font-size: 12.5px; }
+
+  .btn {
+    appearance: none;
+    border: 1px solid var(--ink);
+    background: var(--card);
+    color: var(--ink);
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+  .btn:hover:not(:disabled) { background: #fff; }
+  .btn.primary { background: var(--seal); border-color: var(--seal); color: #fffaf2; }
+  .btn.primary:hover:not(:disabled) { background: var(--seal-deep); }
+  .btn.small { padding: 3px 7px; font-size: 12px; }
+  .btn.ghost { background: transparent; }
+
+  .toolbar-row, .action-row, .seg {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .work-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field span, .seg-label { font-size: 12px; color: var(--muted); }
+  .margin-control { display: flex; align-items: center; gap: 8px; }
+  .margin-control input[type="range"] { width: 140px; accent-color: var(--seal); }
+  .margin-control input[type="number"] {
+    width: 64px;
+    padding: 6px 8px;
+    border: 1px solid var(--ink);
+    background: var(--card);
+    font: inherit;
+  }
+  select {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 7px 10px;
+    font-size: 14px;
+  }
+  .seg button {
+    border: 1px solid var(--ink);
+    background: transparent;
+    padding: 7px 12px;
+  }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--card); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+    gap: 18px;
+    align-items: start;
+  }
+  .panel { padding: 16px; }
+  .panel h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    margin: 0;
+  }
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .summary {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    background: var(--pine-soft);
+    color: var(--pine);
+    border-left: 4px solid var(--pine);
+  }
+  .banner {
+    margin: 0 0 12px;
+    padding: 12px;
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    border-left: 4px solid #c4842a;
+  }
+  .banner p { margin: 0 0 8px; }
+  .banner .toolbar-row { margin-top: 4px; }
+
+  .file-list {
+    max-height: 168px;
+    overflow: auto;
+    border: 1px solid var(--rule);
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  .file-row {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto auto;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .file-row:last-child { border-bottom: 0; }
+  .file-no { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+  .page-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 10px;
+  }
+  .page-card {
+    border: 1px solid var(--rule);
+    background: #fff;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .page-card.is-blank {
+    background: repeating-linear-gradient(-45deg, #fff, #fff 7px, #f6f0e4 7px, #f6f0e4 8px);
+  }
+  .page-card.is-skipped { background: #f3ecdf; }
+  .page-card.is-skipped .thumb-wrap img,
+  .page-card.is-skipped .blank-mark { opacity: 0.4; }
+  .skip-badge {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    background: var(--ink);
+    color: var(--card);
+    font-size: 11px;
+    text-align: center;
+    padding: 2px 0;
+  }
+  .page-card.is-dragging { opacity: 0.35; }
+  .page-card.drop-before { box-shadow: inset 3px 0 0 var(--seal); }
+  .page-card.drop-after { box-shadow: inset -3px 0 0 var(--seal); }
+  .thumb-wrap {
+    background: #fff;
+    border: 1px solid var(--rule);
+    aspect-ratio: var(--ratio, 210 / 297);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    cursor: grab;
+    position: relative;
+  }
+  .thumb-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; background: #fff; }
+  .thumb-wrap.pending { background: linear-gradient(90deg, #f3ecdf, #fff, #f3ecdf); }
+  .blank-mark { color: var(--muted); letter-spacing: 0.12em; }
+  .seq {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .src {
+    color: var(--muted);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .card-actions .wide { grid-column: 1 / -1; }
+
+  .preview-panel { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+  .checklist { margin: 0 0 12px; padding-left: 18px; color: var(--muted); }
+  .checklist li { margin: 2px 0; }
+  .sheet {
+    border-top: 1px solid var(--rule);
+    padding: 14px 0;
+  }
+  .sheet-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .sheet-title span { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .side-label { font-size: 12px; color: var(--seal); margin: 8px 0 4px; letter-spacing: 0.08em; }
+  .sheet-paper {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--ink);
+  }
+  .sheet-paper.is-tumbled { transform: rotate(180deg); }
+  .fold-line {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    border-left: 1px dashed rgba(157, 52, 28, 0.75);
+    z-index: 1;
+  }
+  .slot {
+    position: absolute;
+    min-width: 0;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .slot img { width: 100%; height: 100%; object-fit: contain; }
+  .slot .blank-mark { font-size: 13px; }
+  .spread-labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .spread-labels span {
+    font-size: 11px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .progress { margin: 0 0 12px; }
+  .progress-track { height: 4px; background: var(--bg-2); }
+  .progress-bar { height: 4px; background: var(--pine); width: 0; }
+  #progressText { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; }
+
+  #busy {
+    position: fixed;
+    inset: 0;
+    background: rgba(34, 28, 22, 0.38);
+    display: grid;
+    place-items: center;
+    z-index: 40;
+  }
+  #busy[hidden] { display: none; }
+  #busy div {
+    background: var(--card);
+    padding: 22px 26px;
+    border: 1px solid var(--ink);
+    min-width: min(420px, calc(100vw - 32px));
+  }
+  #busy p { margin: 0; font-family: var(--serif); font-size: 18px; }
+
+  #toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    transform: translateY(12px);
+    background: var(--ink);
+    color: #fffaf2;
+    padding: 10px 14px;
+    max-width: min(420px, calc(100vw - 24px));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 50;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  .drop-overlay {
+    display: none;
+    position: fixed;
+    inset: 12px;
+    border: 2px dashed var(--seal);
+    background: rgba(255, 250, 242, 0.94);
+    z-index: 45;
+    place-items: center;
+    text-align: center;
+    pointer-events: none;
+  }
+  .drop-overlay strong {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 700;
+  }
+  body.is-dragover .drop-overlay { display: grid; }
+
+  #printRoot { display: none; }
+
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+    .preview-panel { position: static; max-height: none; }
+    header.top { flex-direction: column; align-items: flex-start; }
+    .brand h1 { font-size: 28px; }
+  }
+
+  @media print {
+    @page { margin: 0; }
+    html, body { background: #fff !important; }
+    body.printing-sheets > *:not(#printRoot) { display: none !important; }
+    body.printing-sheets #printRoot { display: block !important; }
+    body.printing-sheets .print-sheet {
+      width: 100vw;
+      height: 99vh;
+      display: grid !important;
+      place-items: center;
+      overflow: hidden;
+      break-after: page;
+      page-break-after: always;
+    }
+    body.printing-sheets .print-sheet:last-child {
+      break-after: auto;
+      page-break-after: auto;
+    }
+    body.printing-sheets .print-sheet img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand">
+        <svg viewBox="0 0 64 40" width="64" height="40" aria-hidden="true">
+          <rect x="1.5" y="4" width="29" height="32" fill="#fffaf2" stroke="#221c16" stroke-width="1.5"/>
+          <rect x="33.5" y="4" width="29" height="32" fill="#fffaf2" stroke="#221c16" stroke-width="1.5"/>
+          <path d="M32 4 v32" stroke="#9d341c" stroke-dasharray="2 2"/>
+        </svg>
+        <div>
+          <p class="job-tag">Booklet imposition</p>
+          <h1>小冊子印刷</h1>
+          <p>フォルダ内のPDFや画像を結合し、中綴じの順に面付けします。</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="hero">
+      <div id="libError" class="banner" hidden>
+        <p>PDFライブラリを読み込めませんでした。インターネットに接続して、ページを再読み込みしてください。</p>
+      </div>
+      <div class="hero-card">
+        <p class="eyebrow">中綴じ</p>
+        <h2>印刷したいファイルを指定する</h2>
+        <p>フォルダを指定すると、中にあるPDFと画像を名前順にすべて結合します。JPEG、PNG、WebP、GIFに対応しています。サブフォルダも読み込みます。読み込んだあともファイルを追加でき、ページ数が4の倍数でないときは白紙を足してから印刷できます。</p>
+        <div class="toolbar-row">
+          <button type="button" class="btn primary" id="pickFolder">フォルダを指定</button>
+          <button type="button" class="btn" id="pickFiles">ファイルを指定</button>
+        </div>
+        <p class="muted small">PDFや画像、またはフォルダを、この画面へドロップしても読み込めます。</p>
+      </div>
+    </section>
+
+    <section id="work" hidden>
+      <div class="work-bar">
+        <button type="button" class="btn primary" id="addFiles">ファイルを追加</button>
+        <button type="button" class="btn" id="addFolder">フォルダを追加</button>
+        <div class="field">
+          <span id="bindLabel">綴じ方</span>
+          <div class="seg" role="group" aria-labelledby="bindLabel">
+            <button type="button" id="bindLeft" aria-pressed="true">左綴じ</button>
+            <button type="button" id="bindRight" aria-pressed="false">右綴じ</button>
+          </div>
+        </div>
+        <label class="field">
+          <span>出力用紙</span>
+          <select id="paperSelect">
+            <option value="original">原寸（2ページ分の大きさ）</option>
+            <option value="A3">A3 横</option>
+            <option value="A4">A4 横</option>
+            <option value="B4">B4 横</option>
+            <option value="B5">B5 横</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="layout">
+        <section class="panel" id="pagesPanel">
+          <div class="panel-head">
+            <h2>ページ順</h2>
+            <div class="toolbar-row">
+              <button type="button" class="btn small" id="undoBtn">元に戻す</button>
+              <button type="button" class="btn small" id="resetBtn">読み込み順に戻す</button>
+            </div>
+          </div>
+          <p class="summary" id="summary"></p>
+          <div id="adjustBanner"></div>
+          <div class="progress" id="progress" hidden>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+            <span id="progressText"></span>
+          </div>
+          <div class="file-list" id="fileList"></div>
+          <p class="muted small" style="margin-top:0">サムネイルをドラッグするか、矢印で順番を入れ替えます。削除すると一覧から外れます。印刷しないにすると一覧には残り、小冊子には入りません。見開きの1ページは「左右に分割」で、左と右の2ページとしてその位置に入ります。どれも元に戻せます。</p>
+          <div class="toolbar-row" style="margin-bottom:10px">
+            <button type="button" class="btn small" id="blankStart">先頭に白紙</button>
+            <button type="button" class="btn small" id="blankEnd">末尾に白紙</button>
+          </div>
+          <div class="page-grid" id="pageList"></div>
+        </section>
+
+        <section class="panel preview-panel" id="previewPanel">
+          <div class="panel-head">
+            <h2>小冊子プレビュー</h2>
+          </div>
+          <p class="muted small" id="previewIntro"></p>
+          <label class="field" style="margin-bottom:12px">
+            <span>印刷余白（用紙の四辺）</span>
+            <span class="margin-control">
+              <input id="marginRange" type="range" min="0" max="30" step="1" value="5" aria-label="印刷余白">
+              <input id="marginMm" type="number" min="0" max="30" step="1" value="5" aria-label="印刷余白（mm）">
+              <span>mm</span>
+            </span>
+            <span>はみ出すときは大きく、端まで使いたいときは小さくします。初期値は5mmです。</span>
+          </label>
+          <label class="field" style="margin-bottom:12px">
+            <span>中心の余白（折り目）</span>
+            <span class="margin-control">
+              <input id="gutterRange" type="range" min="0" max="30" step="1" value="0" aria-label="中心の余白">
+              <input id="gutterMm" type="number" min="0" max="30" step="1" value="0" aria-label="中心の余白（mm）">
+              <span>mm</span>
+            </span>
+            <span>左右のページのあいだ、綴じ目側にすき間を作ります。</span>
+          </label>
+          <div class="field" style="margin-bottom:12px">
+            <span id="flipLabel">プリンタの両面</span>
+            <div class="seg" role="group" aria-labelledby="flipLabel">
+              <button type="button" id="flipShort" aria-pressed="true">短辺とじ</button>
+              <button type="button" id="flipLong" aria-pressed="false">長辺とじ</button>
+            </div>
+            <span>短辺とじが初期値です。長辺とじにすると、裏面だけを180度回して、表と裏の上下が揃うようにします。</span>
+          </div>
+          <p class="muted small">Microsoft Edge では、この画面の印刷からも、保存したPDFからも、システムダイアログ（プリンタの詳細設定）へ進むと「この操作の実行中にエラーが発生しました」と出ます。両面の向きは上の短辺とじ・長辺とじで決めてください。プリンタの詳細設定が必要なときは、保存したPDFをAcrobatで開いてください。</p>
+          <ol class="checklist">
+            <li>用紙サイズは下に出ている大きさ、向きは横</li>
+            <li>両面は、上で選んだ短辺とじか長辺とじのまま印刷する</li>
+            <li>倍率は100%。「用紙に合わせる」はオフ</li>
+            <li>プリンタ側の余白はなし。1枚目がいちばん外側のシートです</li>
+          </ol>
+          <div id="previewBody"></div>
+          <div class="action-row">
+            <button type="button" class="btn primary" id="printBtn">小冊子を印刷</button>
+            <button type="button" class="btn" id="saveBtn">PDFを保存</button>
+          </div>
+          <p class="muted small" id="saveNote"></p>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <div id="busy" hidden><div><p id="busyText">処理しています</p></div></div>
+  <div id="toast" role="status"></div>
+  <div class="drop-overlay"><strong id="dropLabel">ここにドロップして読み込む</strong></div>
+  <div id="printRoot"></div>
+  <input id="folderInput" type="file" webkitdirectory directory multiple hidden>
+  <input id="fileInput" type="file" accept="application/pdf,.pdf,image/jpeg,image/png,image/webp,image/gif,image/bmp,image/avif,.jpg,.jpeg,.png,.webp,.gif,.bmp,.avif" multiple hidden>
+
+  <script>
+    window.addEventListener("error", function (event) {
+      var el = document.getElementById("libError");
+      if (!el) return;
+      el.hidden = false;
+      var p = el.querySelector("p");
+      if (p) p.textContent = "ページの起動に失敗しました: " + (event.message || "不明なエラー");
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script>
+    const WORKER_SRC = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    const CMAP_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/";
+    const FONT_URL = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/standard_fonts/";
+    const PREFS_KEY = "booklet-print-prefs";
+    const PAPERS = {
+      original: null,
+      A3: [420, 297],
+      A4: [297, 210],
+      B4: [364, 257],
+      B5: [257, 182]
+    };
+    const KNOWN_SHEETS = [
+      ["A3", 420, 297],
+      ["A4", 297, 210],
+      ["A5", 210, 148],
+      ["B4", 364, 257],
+      ["B5", 257, 182],
+      ["B6", 182, 128]
+    ];
+
+    const state = {
+      sources: [],
+      pages: [],
+      pageById: new Map(),
+      undo: [],
+      nextId: 1,
+      nextSourceId: 1,
+      gen: 0,
+      binding: "left",
+      sheetFlip: "short",
+      paper: "original",
+      marginMm: 5,
+      gutterMm: 0,
+      busy: false,
+      dragFrom: null
+    };
+    const thumbCache = new Map();
+
+    const $ = (id) => document.getElementById(id);
+
+    function esc(value) {
+      return String(value).replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[ch]));
+    }
+
+    function toast(message) {
+      const el = $("toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => el.classList.remove("show"), 5200);
+    }
+
+    function setBusy(text) {
+      state.busy = !!text;
+      const el = $("busy");
+      if (!text) {
+        el.hidden = true;
+        return;
+      }
+      $("busyText").textContent = text;
+      el.hidden = false;
+    }
+
+    function setProgress(done, total, label) {
+      const wrap = $("progress");
+      if (!total) {
+        wrap.hidden = true;
+        return;
+      }
+      wrap.hidden = false;
+      $("progressBar").style.width = Math.round((done / total) * 100) + "%";
+      $("progressText").textContent = label;
+    }
+
+    function loadPrefs() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+        if (saved.binding === "left" || saved.binding === "right") state.binding = saved.binding;
+        if (saved.sheetFlip === "short" || saved.sheetFlip === "long") state.sheetFlip = saved.sheetFlip;
+        if (Object.prototype.hasOwnProperty.call(PAPERS, saved.paper)) state.paper = saved.paper;
+        if (Number.isFinite(Number(saved.marginMm))) state.marginMm = clampMargin(saved.marginMm, 5);
+        if (Number.isFinite(Number(saved.gutterMm))) state.gutterMm = clampMargin(saved.gutterMm, 0);
+      } catch (err) {
+        /* 保存済み設定が壊れていても初期値で続ける */
+      }
+    }
+
+    function savePrefs() {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({
+        binding: state.binding,
+        sheetFlip: state.sheetFlip,
+        paper: state.paper,
+        marginMm: state.marginMm,
+        gutterMm: state.gutterMm
+      }));
+    }
+
+    function isPdf(file) {
+      const name = file.name || "";
+      if (name.startsWith(".")) return false;
+      return file.type === "application/pdf" || /\.pdf$/i.test(name);
+    }
+
+    function isImage(file) {
+      const name = file.name || "";
+      if (name.startsWith(".")) return false;
+      return (file.type || "").startsWith("image/") || /\.(jpe?g|png|webp|gif|bmp|avif)$/i.test(name);
+    }
+
+    function isSupported(file) {
+      return isPdf(file) || isImage(file);
+    }
+
+    function isJpegFile(file) {
+      return file.type === "image/jpeg" || /\.jpe?g$/i.test(file.name || "");
+    }
+
+    function isPngFile(file) {
+      return file.type === "image/png" || /\.png$/i.test(file.name || "");
+    }
+
+    function sortKey(file) {
+      return file._rel || file.webkitRelativePath || file.name || "";
+    }
+
+    function clampMargin(value, fallback) {
+      const n = Math.round(Number(value));
+      if (!Number.isFinite(n)) return fallback;
+      return Math.min(30, Math.max(0, n));
+    }
+
+    function setMargin(value) {
+      state.marginMm = clampMargin(value, 5);
+      savePrefs();
+      syncMarginInputs();
+      if (state.sources.length) render();
+    }
+
+    function setGutter(value) {
+      state.gutterMm = clampMargin(value, 0);
+      savePrefs();
+      syncMarginInputs();
+      if (state.sources.length) render();
+    }
+
+    function syncMarginInputs() {
+      $("marginRange").value = String(state.marginMm);
+      $("marginMm").value = String(state.marginMm);
+      $("gutterRange").value = String(state.gutterMm);
+      $("gutterMm").value = String(state.gutterMm);
+    }
+
+    function mmToPt(mm) {
+      return mm * 72 / 25.4;
+    }
+
+    function ptToMm(pt) {
+      return pt * 25.4 / 72;
+    }
+
+    function matchPaperName(widthMm, heightMm) {
+      for (const [name, w, h] of KNOWN_SHEETS) {
+        if (Math.abs(widthMm - w) < 4 && Math.abs(heightMm - h) < 4) return name + " 横";
+        if (Math.abs(widthMm - h) < 4 && Math.abs(heightMm - w) < 4) return name + " 縦";
+      }
+      return "";
+    }
+
+    function basePageSize() {
+      const first = state.sources[0];
+      if (first && first.sizes[0]) return first.sizes[0];
+      return { width: 595.28, height: 841.89 };
+    }
+
+    function computeLayout() {
+      const { width: pageW, height: pageH } = basePageSize();
+      const contentW = pageW * 2;
+      const contentH = pageH;
+      const spec = PAPERS[state.paper];
+      const paperW = spec ? mmToPt(spec[0]) : contentW;
+      const paperH = spec ? mmToPt(spec[1]) : contentH;
+      const edge = mmToPt(clampMargin(state.marginMm, 5));
+      const gutterRequest = mmToPt(clampMargin(state.gutterMm, 0));
+      const marginX = Math.min(edge, Math.max(0, paperW / 2 - 18));
+      const marginY = Math.min(edge, Math.max(0, paperH / 2 - 18));
+      const gutter = Math.min(gutterRequest, Math.max(0, paperW - marginX * 2 - 36));
+      const innerW = Math.max(36, paperW - marginX * 2 - gutter);
+      const innerH = Math.max(36, paperH - marginY * 2);
+      const scale = Math.min(innerW / contentW, innerH / contentH);
+      const slotW = pageW * scale;
+      const slotH = pageH * scale;
+      const pairW = slotW * 2 + gutter;
+      return {
+        paperW,
+        paperH,
+        offsetX: marginX + (paperW - marginX * 2 - pairW) / 2,
+        offsetY: marginY + (innerH - slotH) / 2,
+        slotW,
+        slotH,
+        gutter,
+        scale,
+        pageW,
+        pageH,
+        marginMm: clampMargin(state.marginMm, 5),
+        gutterMm: clampMargin(state.gutterMm, 0)
+      };
+    }
+
+    function describeLayout(layout) {
+      const w = ptToMm(layout.paperW);
+      const h = ptToMm(layout.paperH);
+      const name = matchPaperName(w, h);
+      const size = (name ? name + " " : "") + Math.round(w) + " × " + Math.round(h) + " mm";
+      const percent = Math.round(layout.scale * 100);
+      const fit = percent >= 98 && percent <= 102 ? "原寸" : "配置倍率 " + percent + "%";
+      return size + "（" + fit + "、四辺 " + layout.marginMm + "mm、中心 " + layout.gutterMm + "mm）";
+    }
+
+    function printablePages() {
+      return state.pages.filter((page) => !page.skip);
+    }
+
+    function blanksNeeded() {
+      const count = printablePages().length;
+      if (!count) return 0;
+      return (4 - (count % 4)) % 4;
+    }
+
+    function bookletSpreads(pageCount, binding) {
+      if (pageCount < 4 || pageCount % 4 !== 0) return [];
+      const spreads = [];
+      const sheets = pageCount / 4;
+      for (let sheet = 0; sheet < sheets; sheet++) {
+        const frontLeft = pageCount - 2 * sheet;
+        const frontRight = 2 * sheet + 1;
+        const backLeft = 2 * sheet + 2;
+        const backRight = pageCount - 2 * sheet - 1;
+        if (binding === "left") {
+          spreads.push({ sheet: sheet + 1, side: "front", left: frontLeft - 1, right: frontRight - 1 });
+          spreads.push({ sheet: sheet + 1, side: "back", left: backLeft - 1, right: backRight - 1 });
+        } else {
+          spreads.push({ sheet: sheet + 1, side: "front", left: frontRight - 1, right: frontLeft - 1 });
+          spreads.push({ sheet: sheet + 1, side: "back", left: backRight - 1, right: backLeft - 1 });
+        }
+      }
+      return spreads;
+    }
+
+    function hasMixedSizes() {
+      const base = basePageSize();
+      return printablePages().some((page) => page.kind === "pdf" && (Math.abs(page.width - base.width) > 2 || Math.abs(page.height - base.height) > 2));
+    }
+
+    function computeCustomized() {
+      if (state.pages.some((page) => page.skip)) return true;
+      let index = 0;
+      for (let s = 0; s < state.sources.length; s++) {
+        for (let p = 0; p < state.sources[s].pageCount; p++) {
+          const page = state.pages[index++];
+          if (!page || page.kind !== "pdf" || page.sourceIndex !== s || page.pageIndex !== p) return true;
+        }
+      }
+      return index !== state.pages.length;
+    }
+
+    function thumbKey(source, pageIndex, crop) {
+      return source.uid + ":" + pageIndex + (crop ? ":" + crop : "");
+    }
+
+    function makePdfPage(sourceIndex, pageIndex, crop) {
+      const source = state.sources[sourceIndex];
+      const size = source.sizes[pageIndex];
+      const side = crop === "left" || crop === "right" ? crop : null;
+      const page = {
+        id: state.nextId++,
+        kind: "pdf",
+        sourceIndex,
+        pageIndex,
+        crop: side,
+        width: side ? size.width / 2 : size.width,
+        height: size.height,
+        thumb: thumbCache.get(thumbKey(source, pageIndex, side)) || null
+      };
+      state.pageById.set(page.id, page);
+      return page;
+    }
+
+    function splitSpread(index) {
+      const page = state.pages[index];
+      if (!page || page.kind !== "pdf" || page.crop) return;
+      pushUndo();
+      const left = makePdfPage(page.sourceIndex, page.pageIndex, "left");
+      const right = makePdfPage(page.sourceIndex, page.pageIndex, "right");
+      if (page.skip) {
+        left.skip = true;
+        right.skip = true;
+      }
+      state.pages.splice(index, 1, left, right);
+      render();
+      renderThumbs(state.gen);
+      toast("見開きを左と右の2ページに分けて入れました");
+    }
+
+    function halfBounds(srcPage, side) {
+      const box = srcPage.getCropBox();
+      const angle = ((srcPage.getRotation().angle % 360) + 360) % 360;
+      const x0 = box.x;
+      const y0 = box.y;
+      const x1 = box.x + box.width;
+      const y1 = box.y + box.height;
+      const mx = box.x + box.width / 2;
+      const my = box.y + box.height / 2;
+      if (angle === 180) {
+        return side === "right"
+          ? { left: x0, bottom: y0, right: mx, top: y1 }
+          : { left: mx, bottom: y0, right: x1, top: y1 };
+      }
+      if (angle === 90) {
+        return side === "left"
+          ? { left: x0, bottom: my, right: x1, top: y1 }
+          : { left: x0, bottom: y0, right: x1, top: my };
+      }
+      if (angle === 270) {
+        return side === "left"
+          ? { left: x0, bottom: y0, right: x1, top: my }
+          : { left: x0, bottom: my, right: x1, top: y1 };
+      }
+      return side === "left"
+        ? { left: x0, bottom: y0, right: mx, top: y1 }
+        : { left: mx, bottom: y0, right: x1, top: y1 };
+    }
+
+    function cropCanvas(canvas, side) {
+      const leftW = Math.floor(canvas.width / 2);
+      const sx = side === "right" ? leftW : 0;
+      const sw = side === "right" ? canvas.width - leftW : leftW;
+      const out = document.createElement("canvas");
+      out.width = Math.max(1, sw);
+      out.height = canvas.height;
+      out.getContext("2d").drawImage(canvas, sx, 0, sw, canvas.height, 0, 0, out.width, out.height);
+      return out;
+    }
+
+    function makeBlank() {
+      const size = basePageSize();
+      const page = {
+        id: state.nextId++,
+        kind: "blank",
+        width: size.width,
+        height: size.height,
+        thumb: null
+      };
+      state.pageById.set(page.id, page);
+      return page;
+    }
+
+    function rebuildPages() {
+      state.pageById = new Map();
+      state.undo = [];
+      state.pages = [];
+      for (let s = 0; s < state.sources.length; s++) {
+        for (let p = 0; p < state.sources[s].pageCount; p++) {
+          state.pages.push(makePdfPage(s, p));
+        }
+      }
+    }
+
+    function pushUndo() {
+      state.undo.push({
+        pages: state.pages.map((page) => page.id),
+        sources: state.sources.map((source) => source.uid),
+        skips: [...state.pageById.values()].filter((page) => page.skip).map((page) => page.id)
+      });
+      if (state.undo.length > 40) state.undo.shift();
+    }
+
+    function undo() {
+      const snap = state.undo.pop();
+      if (!snap) return;
+      const pageIds = Array.isArray(snap) ? snap : snap.pages;
+      state.pages = pageIds.map((id) => state.pageById.get(id)).filter(Boolean);
+      if (snap.sources) {
+        const byUid = new Map(state.sources.map((source) => [source.uid, source]));
+        const keep = new Set(snap.sources);
+        for (const source of state.sources) {
+          if (keep.has(source.uid)) continue;
+          try { source.doc.destroy(); } catch (err) { /* 追加前の状態に戻すため、外したPDFは破棄する */ }
+          for (let p = 0; p < source.pageCount; p++) thumbCache.delete(source.uid + ":" + p);
+        }
+        state.sources = snap.sources.map((uid) => byUid.get(uid)).filter(Boolean);
+      }
+      if (snap.skips) {
+        const skipSet = new Set(snap.skips);
+        for (const page of state.pageById.values()) page.skip = skipSet.has(page.id);
+      }
+      render();
+    }
+
+    function insertBlanks(index, count) {
+      if (count <= 0) return;
+      pushUndo();
+      const blanks = [];
+      for (let i = 0; i < count; i++) blanks.push(makeBlank());
+      state.pages.splice(index, 0, ...blanks);
+      render();
+    }
+
+    function removePage(index) {
+      if (!state.pages[index]) return;
+      pushUndo();
+      state.pages.splice(index, 1);
+      render();
+    }
+
+    function toggleSkip(index) {
+      const page = state.pages[index];
+      if (!page) return;
+      pushUndo();
+      page.skip = !page.skip;
+      render();
+    }
+
+    function movePage(index, delta) {
+      const to = index + delta;
+      if (to < 0 || to >= state.pages.length) return;
+      pushUndo();
+      const [item] = state.pages.splice(index, 1);
+      state.pages.splice(to, 0, item);
+      render();
+    }
+
+    function reorderPage(from, dest) {
+      if (from === dest || dest < 0 || dest >= state.pages.length) return;
+      pushUndo();
+      const [item] = state.pages.splice(from, 1);
+      state.pages.splice(dest, 0, item);
+      render();
+    }
+
+    function padBlanks(mode) {
+      const need = blanksNeeded();
+      if (!need) return;
+      if (mode === "end") insertBlanks(state.pages.length, need);
+      else if (mode === "before-last") {
+        let at = state.pages.length;
+        for (let i = state.pages.length - 1; i >= 0; i--) {
+          if (!state.pages[i].skip) {
+            at = i;
+            break;
+          }
+        }
+        insertBlanks(at, need);
+      } else {
+        const first = state.pages.findIndex((page) => !page.skip);
+        insertBlanks(first < 0 ? 0 : first + 1, need);
+      }
+    }
+
+    function resetPages() {
+      if (!computeCustomized()) return;
+      if (!confirm("ページの順番、削除、印刷しない指定、白紙、見開きの分割を、読み込んだ直後の状態に戻します。")) return;
+      const gen = ++state.gen;
+      rebuildPages();
+      render();
+      renderThumbs(gen);
+    }
+
+    function moveFile(index, delta) {
+      const to = index + delta;
+      if (to < 0 || to >= state.sources.length) return;
+      if (computeCustomized()) {
+        if (!confirm("ファイルの順番を変えると、ページの入れ替え、削除、印刷しない指定、白紙、見開きの分割は最初からやり直します。続けますか？")) return;
+      }
+      const gen = ++state.gen;
+      const [item] = state.sources.splice(index, 1);
+      state.sources.splice(to, 0, item);
+      rebuildPages();
+      render();
+      renderThumbs(gen);
+    }
+
+    function pageSourceLabel(page) {
+      if (page.kind === "blank") return "白紙";
+      const source = state.sources[page.sourceIndex];
+      const side = page.crop === "left" ? " 左" : page.crop === "right" ? " 右" : "";
+      return source.name + " · p." + (page.pageIndex + 1) + side;
+    }
+
+    function pageCaption(page, index) {
+      const no = "冊子 " + (index + 1);
+      return no + " · " + pageSourceLabel(page);
+    }
+
+    function render() {
+      const hasFiles = state.sources.length > 0;
+      $("hero").hidden = hasFiles;
+      $("work").hidden = !hasFiles;
+      if (!hasFiles) return;
+
+      $("bindLeft").setAttribute("aria-pressed", String(state.binding === "left"));
+      $("bindRight").setAttribute("aria-pressed", String(state.binding === "right"));
+      $("flipShort").setAttribute("aria-pressed", String(state.sheetFlip !== "long"));
+      $("flipLong").setAttribute("aria-pressed", String(state.sheetFlip === "long"));
+      $("paperSelect").value = state.paper;
+      syncMarginInputs();
+
+      const printable = printablePages();
+      const need = blanksNeeded();
+      const sheets = need === 0 ? printable.length / 4 : 0;
+      const blankCount = printable.filter((page) => page.kind === "blank").length;
+      const skipCount = state.pages.length - printable.length;
+      const fileCount = state.sources.length;
+      const contentCount = printable.filter((page) => page.kind === "pdf").length;
+      let summary = fileCount + "ファイル / 印刷する原稿 " + contentCount + "ページ";
+      if (blankCount) summary += " / 白紙 " + blankCount + "ページ";
+      if (skipCount) summary += " / 印刷しない " + skipCount + "ページ";
+      summary += " / 印刷対象 " + printable.length + "ページ";
+      if (!printable.length) summary += "。印刷するページがありません";
+      else if (need === 0) summary += " / 用紙 " + sheets + "枚（印刷PDFは " + (printable.length / 2) + "ページ）";
+      else summary += "。あと白紙 " + need + "ページで4の倍数になります";
+      $("summary").textContent = summary;
+
+      const mixedNote = hasMixedSizes()
+        ? "<p>ページサイズが混在しています。最初のファイルの1ページ目に合わせて、各ページを縮小して配置します。</p>"
+        : "";
+      const banner = $("adjustBanner");
+      const printableCount = printablePages().length;
+      if (!printableCount && state.pages.length) {
+        banner.hidden = false;
+        banner.className = "banner";
+        banner.innerHTML = "<p>印刷するページがありません。印刷しない指定を外すか、削除したページを元に戻してください。</p>" + mixedNote;
+      } else if (need > 0) {
+        banner.hidden = false;
+        banner.className = "banner";
+        banner.innerHTML =
+          "<p>印刷対象は " + printableCount + " ページです。中綴じには4の倍数が必要なので、白紙を " + need + " ページ足してください。足した白紙はドラッグで位置を変えられます。</p>" +
+          '<div class="toolbar-row">' +
+          '<button type="button" class="btn small" data-pad="end">末尾に白紙を' + need + "枚追加</button>" +
+          '<button type="button" class="btn small" data-pad="before-last">最後のページの前に' + need + "枚追加</button>" +
+          '<button type="button" class="btn small" data-pad="after-first">表紙の次に' + need + "枚追加</button>" +
+          "</div>" +
+          '<p class="small">末尾に足すと裏表紙が白紙になります。最後のページの前に足すと、いまの最終ページが裏表紙のままです。印刷しないページは枚数に入りません。</p>' +
+          mixedNote;
+      } else if (mixedNote) {
+        banner.hidden = false;
+        banner.className = "banner";
+        banner.innerHTML = mixedNote;
+      } else {
+        banner.hidden = true;
+        banner.innerHTML = "";
+      }
+
+      $("undoBtn").disabled = state.undo.length === 0;
+      $("resetBtn").disabled = !computeCustomized();
+
+      const fileList = $("fileList");
+      fileList.innerHTML = state.sources.map((source, index) => {
+        const path = (source.path || source.name).replace(/^\//, "");
+        return (
+          '<div class="file-row">' +
+          '<span class="file-no">' + (index + 1) + "</span>" +
+          '<span class="file-name" title="' + esc(path) + '">' + esc(source.name) + "</span>" +
+          '<span class="file-meta">' + source.pageCount + "ページ</span>" +
+          '<span class="toolbar-row">' +
+          '<button type="button" class="btn small" data-file-move="-1" data-file-index="' + index + '"' + (index === 0 ? " disabled" : "") + ">上</button>" +
+          '<button type="button" class="btn small" data-file-move="1" data-file-index="' + index + '"' + (index === state.sources.length - 1 ? " disabled" : "") + ">下</button>" +
+          "</span></div>"
+        );
+      }).join("");
+
+      const base = basePageSize();
+      const ratio = base.width + " / " + base.height;
+      let bookletNo = 0;
+      $("pageList").innerHTML = state.pages.map((page, index) => {
+        const isBlank = page.kind === "blank";
+        const srcText = pageSourceLabel(page);
+        if (!page.skip) bookletNo += 1;
+        const seq = page.skip ? "印刷しない" : "冊子 " + bookletNo;
+        const thumbInner = isBlank
+          ? '<span class="blank-mark">白紙</span>'
+          : (page.thumb ? '<img data-id="' + page.id + '" alt="" src="' + page.thumb + '">' : '<img data-id="' + page.id + '" alt="">');
+        const thumb = '<div class="thumb-wrap' + (isBlank ? " blank-thumb" : page.thumb ? "" : " pending") + '" data-drag draggable="true" style="--ratio:' + (isBlank ? ratio : page.width + " / " + page.height) + '">' +
+          thumbInner +
+          (page.skip ? '<span class="skip-badge">印刷しない</span>' : "") +
+          "</div>";
+        const classes = "page-card" + (isBlank ? " is-blank" : "") + (page.skip ? " is-skipped" : "");
+        return (
+          '<article class="' + classes + '" data-index="' + index + '">' +
+          thumb +
+          '<div class="seq">' + seq + "</div>" +
+          '<div class="src" title="' + esc(srcText) + '">' + esc(srcText) + "</div>" +
+          '<div class="card-actions">' +
+          '<button type="button" class="btn small" data-action="prev"' + (index === 0 ? " disabled" : "") + " aria-label=\"一つ前へ\">←</button>" +
+          '<button type="button" class="btn small" data-action="next"' + (index === state.pages.length - 1 ? " disabled" : "") + " aria-label=\"一つ次へ\">→</button>" +
+          '<button type="button" class="btn small" data-action="blank-after">+白紙</button>' +
+          '<button type="button" class="btn small" data-action="remove">削除</button>' +
+          (isBlank || page.crop ? "" : '<button type="button" class="btn small wide" data-action="split" title="見開きの1ページを、左と右の2ページとしてこの位置に入れます">左右に分割</button>') +
+          '<button type="button" class="btn small wide" data-action="skip">' + (page.skip ? "印刷する" : "印刷しない") + "</button>" +
+          "</div></article>"
+        );
+      }).join("");
+
+      renderPreview();
+    }
+
+    function renderPreview() {
+      const layout = computeLayout();
+      const pages = printablePages();
+      const need = blanksNeeded();
+      const ready = pages.length > 0 && need === 0;
+      const sizeText = describeLayout(layout);
+      const bindingText = state.binding === "left"
+        ? "左綴じです。各シートの表は、左が後ろ側、右が前側です。"
+        : "右綴じです。各シートの表は、左が前側、右が後ろ側です。";
+      const flipText = state.sheetFlip === "long"
+        ? "裏面は長辺とじ向けに180度回しています。"
+        : "裏面は短辺とじ向けです。";
+      $("previewIntro").textContent = ready
+        ? "出力用紙は " + sizeText + "。" + bindingText + flipText + " 保存するPDFは見開き面付け済みで、ページ数は原稿の半分です。"
+        : "ページ数を4の倍数にすると、折りのプレビューがここに出ます。";
+
+      $("printBtn").disabled = !ready;
+      $("saveBtn").disabled = !ready;
+      $("printBtn").textContent = ready ? "小冊子を印刷（用紙" + (pages.length / 4) + "枚）" : "小冊子を印刷";
+      $("saveBtn").textContent = ready ? "PDFを保存（" + (pages.length / 2) + "ページ）" : "PDFを保存";
+      $("saveNote").textContent = ready
+        ? "印刷で文字をくっきり出したいときは、保存したPDFをAcrobatやEdgeで開き、同じ設定で印刷してください。画面の印刷も、この面付けと同じ順です。"
+        : "";
+
+      const body = $("previewBody");
+      if (!ready) {
+        body.innerHTML = "";
+        return;
+      }
+
+      const spreads = bookletSpreads(pages.length, state.binding);
+      const totalSheets = pages.length / 4;
+      const groups = [];
+      for (const spread of spreads) {
+        if (!groups[spread.sheet - 1]) groups[spread.sheet - 1] = { number: spread.sheet, front: null, back: null };
+        groups[spread.sheet - 1][spread.side] = spread;
+      }
+
+      body.innerHTML = groups.map((group) => {
+        let place = "";
+        if (totalSheets === 1) place = "1枚だけ";
+        else if (group.number === 1) place = "いちばん外側";
+        else if (group.number === totalSheets) place = "いちばん内側";
+        return (
+          '<article class="sheet">' +
+          '<div class="sheet-title">シート ' + group.number + "<span>" + place + "</span></div>" +
+          sideBlock("表", group.front, layout, pages, false) +
+          sideBlock("裏", group.back, layout, pages, state.sheetFlip === "long") +
+          "</article>"
+        );
+      }).join("");
+    }
+
+    function sideBlock(label, spread, layout, pages, tumble) {
+      const left = (layout.offsetX / layout.paperW) * 100;
+      const top = (layout.offsetY / layout.paperH) * 100;
+      const width = (layout.slotW / layout.paperW) * 100;
+      const height = (layout.slotH / layout.paperH) * 100;
+      const right = ((layout.offsetX + layout.slotW + layout.gutter) / layout.paperW) * 100;
+      const leftCaption = esc(pageCaption(pages[spread.left], spread.left));
+      const rightCaption = esc(pageCaption(pages[spread.right], spread.right));
+      const captions = tumble
+        ? "<span>" + rightCaption + "</span><span>" + leftCaption + "</span>"
+        : "<span>" + leftCaption + "</span><span>" + rightCaption + "</span>";
+      return (
+        '<div class="side-label">' + label + (tumble ? "（180度回転）" : "") + "</div>" +
+        '<div class="sheet-paper' + (tumble ? " is-tumbled" : "") + '" style="aspect-ratio:' + layout.paperW + " / " + layout.paperH + '">' +
+        '<div class="fold-line"></div>' +
+        slotHtml(pages[spread.left], left, top, width, height) +
+        slotHtml(pages[spread.right], right, top, width, height) +
+        "</div>" +
+        '<div class="spread-labels">' + captions + "</div>"
+      );
+    }
+
+    function slotHtml(page, left, top, width, height) {
+      const place = 'style="left:' + left + "%;top:" + top + "%;width:" + width + "%;height:" + height + '%"';
+      if (!page || page.kind === "blank") return '<div class="slot" ' + place + '><span class="blank-mark">白紙</span></div>';
+      const src = page.thumb ? ' src="' + page.thumb + '"' : "";
+      return '<div class="slot" ' + place + '><img data-preview="' + page.id + '" alt=""' + src + "></div>";
+    }
+
+    function updateThumb(page) {
+      document.querySelectorAll('img[data-id="' + page.id + '"], img[data-preview="' + page.id + '"]').forEach((img) => {
+        if (page.thumb) img.src = page.thumb;
+        img.closest(".thumb-wrap")?.classList.remove("pending");
+      });
+    }
+
+    async function renderThumbs(gen) {
+      const jobs = state.pages.filter((page) => page.kind === "pdf" && !page.thumb);
+      if (!jobs.length) {
+        if (gen === state.gen) setProgress(0, 0, "");
+        return;
+      }
+      let cursor = 0;
+      let done = 0;
+      setProgress(0, jobs.length, "プレビュー画像 0 / " + jobs.length);
+
+      async function worker() {
+        while (cursor < jobs.length) {
+          const page = jobs[cursor++];
+          if (gen !== state.gen) return;
+          try {
+            const source = state.sources[page.sourceIndex];
+            const pdfPage = await source.doc.getPage(page.pageIndex + 1);
+            if (gen !== state.gen) return;
+            const base = pdfPage.getViewport({ scale: 1 });
+            const viewWidth = page.crop ? base.width / 2 : base.width;
+            const cssWidth = 180;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const viewport = pdfPage.getViewport({ scale: (cssWidth * dpr) / viewWidth });
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.ceil(viewport.width);
+            canvas.height = Math.ceil(viewport.height);
+            const context = canvas.getContext("2d", { alpha: false });
+            context.fillStyle = "#ffffff";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            await pdfPage.render({ canvasContext: context, viewport }).promise;
+            if (gen !== state.gen) return;
+            const shown = page.crop ? cropCanvas(canvas, page.crop) : canvas;
+            page.thumb = shown.toDataURL("image/jpeg", 0.82);
+            thumbCache.set(thumbKey(source, page.pageIndex, page.crop), page.thumb);
+            updateThumb(page);
+          } catch (err) {
+            console.error(err);
+          }
+          done++;
+          if (gen === state.gen) setProgress(done, jobs.length, "プレビュー画像 " + done + " / " + jobs.length);
+        }
+      }
+
+      const pool = Math.min(2, jobs.length);
+      await Promise.all(Array.from({ length: pool }, () => worker()));
+      if (gen === state.gen) setProgress(0, 0, "");
+    }
+
+    function describePdfError(err, name) {
+      if (err && err.name === "PasswordException") return name + " はパスワード付きのため読み込めません";
+      if (err && err.name === "InvalidPDFException") return name + " はPDFとして読み込めませんでした";
+      if (err && /画像/.test(err.message || "")) return name + " は画像として読み込めませんでした";
+      return name + " を読み込めませんでした";
+    }
+
+    function jpegOrientation(bytes) {
+      if (bytes.length < 4 || bytes[0] !== 0xFF || bytes[1] !== 0xD8) return 1;
+      const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      let offset = 2;
+      while (offset + 4 < bytes.length) {
+        if (bytes[offset] !== 0xFF) return 1;
+        const marker = bytes[offset + 1];
+        if (marker === 0xD9 || marker === 0xDA) return 1;
+        const size = view.getUint16(offset + 2);
+        if (size < 2) return 1;
+        if (marker === 0xE1 && size >= 16 && bytes[offset + 4] === 0x45 && bytes[offset + 5] === 0x78 && bytes[offset + 6] === 0x69 && bytes[offset + 7] === 0x66) {
+          return readExifOrientation(view, offset + 10, offset + 2 + size);
+        }
+        offset += 2 + size;
+      }
+      return 1;
+    }
+
+    function readExifOrientation(view, tiffStart, end) {
+      try {
+        if (tiffStart + 8 > end) return 1;
+        const le = view.getUint16(tiffStart) === 0x4949;
+        const get16 = (pos) => view.getUint16(pos, le);
+        const get32 = (pos) => view.getUint32(pos, le);
+        if (get16(tiffStart + 2) !== 0x002A) return 1;
+        let ifd = tiffStart + get32(tiffStart + 4);
+        if (ifd + 2 > end) return 1;
+        const count = get16(ifd);
+        ifd += 2;
+        for (let i = 0; i < count; i++) {
+          const entry = ifd + i * 12;
+          if (entry + 12 > end) break;
+          if (get16(entry) === 0x0112) {
+            const value = get16(entry + 8);
+            return value >= 1 && value <= 8 ? value : 1;
+          }
+        }
+      } catch (err) {
+        return 1;
+      }
+      return 1;
+    }
+
+    function loadImageElement(bytes, mime) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(new Blob([bytes], { type: mime || "application/octet-stream" }));
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error("画像を読み込めませんでした"));
+        };
+        img.src = url;
+      });
+    }
+
+    function canvasToBytes(canvas, type, quality) {
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            reject(new Error("画像を読み込めませんでした"));
+            return;
+          }
+          resolve(new Uint8Array(await blob.arrayBuffer()));
+        }, type, quality);
+      });
+    }
+
+    async function rasterImage(img, type) {
+      const width = img.naturalWidth || img.width;
+      const height = img.naturalHeight || img.height;
+      if (!width || !height) throw new Error("画像を読み込めませんでした");
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d");
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, width, height);
+      context.drawImage(img, 0, 0);
+      const mime = type === "png" ? "image/png" : "image/jpeg";
+      return {
+        bytes: await canvasToBytes(canvas, mime, 0.92),
+        width,
+        height,
+        kind: type === "png" ? "png" : "jpg"
+      };
+    }
+
+    function imagePointSize(pixelW, pixelH) {
+      const base = state.sources[0] && state.sources[0].sizes[0];
+      const targetLong = base ? Math.max(base.width, base.height) : 841.89;
+      const scale = targetLong / Math.max(pixelW, pixelH, 1);
+      return {
+        width: Math.max(1, pixelW * scale),
+        height: Math.max(1, pixelH * scale)
+      };
+    }
+
+    async function imageAsPdfFile(file) {
+      const raw = new Uint8Array(await file.arrayBuffer());
+      const img = await loadImageElement(raw, file.type);
+      let embedBytes = raw;
+      let kind = "png";
+      let pixelW = img.naturalWidth;
+      let pixelH = img.naturalHeight;
+      if (!pixelW || !pixelH) throw new Error("画像を読み込めませんでした");
+      if (isJpegFile(file) && jpegOrientation(raw) === 1) {
+        kind = "jpg";
+      } else if (isPngFile(file)) {
+        kind = "png";
+      } else {
+        const raster = await rasterImage(img, isJpegFile(file) ? "jpg" : "png");
+        embedBytes = raster.bytes;
+        pixelW = raster.width;
+        pixelH = raster.height;
+        kind = raster.kind;
+      }
+      const pageSize = imagePointSize(pixelW, pixelH);
+      const pdf = await PDFLib.PDFDocument.create();
+      const page = pdf.addPage([pageSize.width, pageSize.height]);
+      let embedded;
+      try {
+        embedded = kind === "jpg" ? await pdf.embedJpg(embedBytes) : await pdf.embedPng(embedBytes);
+      } catch (err) {
+        const raster = await rasterImage(img, "png");
+        embedded = await pdf.embedPng(raster.bytes);
+      }
+      page.drawImage(embedded, { x: 0, y: 0, width: pageSize.width, height: pageSize.height });
+      const pdfFile = new File([await pdf.save()], file.name, { type: "application/pdf" });
+      if (file._rel) pdfFile._rel = file._rel;
+      return pdfFile;
+    }
+
+    async function readSource(file) {
+      const sourceFile = isImage(file) ? await imageAsPdfFile(file) : file;
+      const bytes = new Uint8Array(await sourceFile.arrayBuffer());
+      const task = pdfjsLib.getDocument({
+        data: bytes.slice(0),
+        cMapUrl: CMAP_URL,
+        cMapPacked: true,
+        standardFontDataUrl: FONT_URL
+      });
+      const doc = await task.promise;
+      const sizes = [];
+      for (let i = 1; i <= doc.numPages; i++) {
+        const page = await doc.getPage(i);
+        const viewport = page.getViewport({ scale: 1 });
+        sizes.push({ width: viewport.width, height: viewport.height });
+      }
+      return {
+        uid: state.nextSourceId++,
+        name: file.name,
+        path: sortKey(file),
+        bytes,
+        doc,
+        pageCount: doc.numPages,
+        sizes
+      };
+    }
+
+    async function loadPdfs(fileList) {
+      const incoming = [...fileList].filter(isSupported).sort((a, b) => {
+        return sortKey(a).localeCompare(sortKey(b), "ja", { numeric: true, sensitivity: "base" });
+      });
+      if (!incoming.length) {
+        toast("PDFまたは画像が見つかりませんでした");
+        return;
+      }
+      if (state.sources.length && computeCustomized()) {
+        if (!confirm("読み込み中のページ順は破棄して、新しく読み込みます。続けますか？")) return;
+      }
+
+      const gen = ++state.gen;
+      setBusy("ファイルを読み込んでいます");
+      try {
+        for (const source of state.sources) {
+          try { await source.doc.destroy(); } catch (err) { /* 破棄できなくても読み込みは続ける */ }
+        }
+        state.sources = [];
+        thumbCache.clear();
+        const errors = [];
+        for (let i = 0; i < incoming.length; i++) {
+          if (gen !== state.gen) return;
+          const file = incoming[i];
+          setBusy("読み込み中 " + (i + 1) + " / " + incoming.length + "  " + file.name);
+          try {
+            state.sources.push(await readSource(file));
+          } catch (err) {
+            errors.push(describePdfError(err, file.name));
+          }
+        }
+        if (gen !== state.gen) return;
+        if (!state.sources.length) {
+          toast(errors[0] || "PDFを読み込めませんでした");
+          render();
+          return;
+        }
+        rebuildPages();
+        render();
+        if (errors.length) toast("一部を読み込めませんでした。" + errors[0]);
+        else toast(state.sources.length + "件のファイルを読み込みました");
+        setBusy(false);
+        await renderThumbs(gen);
+      } catch (err) {
+        console.error(err);
+        toast("読み込みに失敗しました");
+      } finally {
+        if (gen === state.gen) setBusy(false);
+      }
+    }
+
+    async function releaseSources(sources) {
+      for (const source of sources) {
+        try { await source.doc.destroy(); } catch (err) { /* 中断した読み込みの後始末 */ }
+      }
+    }
+
+    async function addPdfs(fileList) {
+      const incoming = [...fileList].filter(isSupported).sort((a, b) => {
+        return sortKey(a).localeCompare(sortKey(b), "ja", { numeric: true, sensitivity: "base" });
+      });
+      if (!incoming.length) {
+        toast("PDFまたは画像が見つかりませんでした");
+        return;
+      }
+      if (!state.sources.length) {
+        await loadPdfs(incoming);
+        return;
+      }
+
+      const gen = ++state.gen;
+      setBusy("ファイルを追加しています");
+      const added = [];
+      try {
+        const errors = [];
+        for (let i = 0; i < incoming.length; i++) {
+          if (gen !== state.gen) {
+            await releaseSources(added);
+            return;
+          }
+          const file = incoming[i];
+          setBusy("追加中 " + (i + 1) + " / " + incoming.length + "  " + file.name);
+          try {
+            added.push(await readSource(file));
+          } catch (err) {
+            errors.push(describePdfError(err, file.name));
+          }
+        }
+        if (gen !== state.gen) {
+          await releaseSources(added);
+          return;
+        }
+        if (!added.length) {
+          toast(errors[0] || "PDFを追加できませんでした");
+          return;
+        }
+        pushUndo();
+        const startIndex = state.sources.length;
+        state.sources.push(...added);
+        for (let s = 0; s < added.length; s++) {
+          for (let p = 0; p < added[s].pageCount; p++) {
+            state.pages.push(makePdfPage(startIndex + s, p));
+          }
+        }
+        render();
+        const pageTotal = added.reduce((sum, source) => sum + source.pageCount, 0);
+        if (errors.length) toast("一部を追加できませんでした。" + errors[0]);
+        else toast(added.length + "件のファイル（" + pageTotal + "ページ）を末尾に追加しました");
+        setBusy(false);
+        await renderThumbs(gen);
+      } catch (err) {
+        console.error(err);
+        await releaseSources(added.filter((source) => !state.sources.includes(source)));
+        toast("PDFの追加に失敗しました");
+      } finally {
+        if (gen === state.gen) setBusy(false);
+      }
+    }
+
+    function readEntries(reader) {
+      return new Promise((resolve, reject) => {
+        const all = [];
+        const readBatch = () => {
+          reader.readEntries((batch) => {
+            if (!batch.length) resolve(all);
+            else {
+              all.push(...batch);
+              readBatch();
+            }
+          }, reject);
+        };
+        readBatch();
+      });
+    }
+
+    async function collectEntry(entry, out) {
+      if (entry.isFile) {
+        const file = await new Promise((resolve, reject) => entry.file(resolve, reject));
+        file._rel = entry.fullPath || file.name;
+        if (isSupported(file)) out.push(file);
+      } else if (entry.isDirectory) {
+        const entries = await readEntries(entry.createReader());
+        for (const child of entries) await collectEntry(child, out);
+      }
+    }
+
+    async function handleDrop(event) {
+      const items = [...(event.dataTransfer.items || [])];
+      const files = [];
+      const entries = [];
+      for (const item of items) {
+        const entry = item.webkitGetAsEntry && item.webkitGetAsEntry();
+        if (entry) entries.push(entry);
+        else if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file) files.push(file);
+        }
+      }
+      for (const entry of entries) await collectEntry(entry, files);
+      if (!files.length && event.dataTransfer.files) {
+        files.push(...event.dataTransfer.files);
+      }
+      if (state.sources.length) await addPdfs(files);
+      else await loadPdfs(files);
+    }
+
+    function drawFitted(sheet, embedded, box, layout) {
+      if (!embedded) return;
+      const scale = Math.min(box.w / embedded.width, box.h / embedded.height);
+      const dw = embedded.width * scale;
+      const dh = embedded.height * scale;
+      const vx = box.x + (box.w - dw) / 2;
+      const vy = box.y + (box.h - dh) / 2;
+      if (layout.paperW < layout.paperH) {
+        sheet.drawPage(embedded, { x: vx, y: vy, width: dw, height: dh });
+        return;
+      }
+      sheet.drawPage(embedded, {
+        x: layout.paperH - vy,
+        y: vx,
+        width: dw,
+        height: dh,
+        rotate: PDFLib.degrees(90)
+      });
+    }
+
+    function addBookletSheet(out, layout, tumble) {
+      if (layout.paperW < layout.paperH) {
+        const page = out.addPage([layout.paperW, layout.paperH]);
+        if (tumble) page.setRotation(PDFLib.degrees(180));
+        return page;
+      }
+      const page = out.addPage([layout.paperH, layout.paperW]);
+      page.setRotation(PDFLib.degrees(tumble ? 270 : 90));
+      return page;
+    }
+
+    async function buildBookletPdf() {
+      const layout = computeLayout();
+      const out = await PDFLib.PDFDocument.create();
+      const srcDocs = [];
+      for (const source of state.sources) srcDocs.push(await PDFLib.PDFDocument.load(source.bytes));
+      const embeddedCache = new Map();
+
+      async function embed(page) {
+        if (!page || page.kind === "blank") return null;
+        if (embeddedCache.has(page.id)) return embeddedCache.get(page.id);
+        const srcPage = srcDocs[page.sourceIndex].getPage(page.pageIndex);
+        const embedded = page.crop
+          ? await out.embedPage(srcPage, halfBounds(srcPage, page.crop))
+          : await out.embedPage(srcPage);
+        embeddedCache.set(page.id, embedded);
+        return embedded;
+      }
+
+      const pages = printablePages();
+      const spreads = bookletSpreads(pages.length, state.binding);
+      for (const spread of spreads) {
+        const tumble = spread.side === "back" && state.sheetFlip === "long";
+        const sheet = addBookletSheet(out, layout, tumble);
+        const left = await embed(pages[spread.left]);
+        const right = await embed(pages[spread.right]);
+        const leftBox = { x: layout.offsetX, y: layout.offsetY, w: layout.slotW, h: layout.slotH };
+        const rightBox = { x: layout.offsetX + layout.slotW + layout.gutter, y: layout.offsetY, w: layout.slotW, h: layout.slotH };
+        drawFitted(sheet, left, leftBox, layout);
+        drawFitted(sheet, right, rightBox, layout);
+      }
+      out.setTitle("小冊子");
+      out.setProducer("小冊子印刷");
+      return out.save();
+    }
+
+    function bookletFilename() {
+      const first = state.sources[0];
+      if (!first) return "小冊子.pdf";
+      const base = first.name.replace(/\.pdf$/i, "");
+      const suffix = state.sources.length > 1 ? "_ほか" + (state.sources.length - 1) + "件" : "";
+      return base + suffix + "_小冊子.pdf";
+    }
+
+    function downloadBytes(bytes, filename) {
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+
+    async function saveBooklet() {
+      if (blanksNeeded() !== 0 || !printablePages().length || state.busy) return;
+      try {
+        setBusy("小冊子PDFを作成しています");
+        const bytes = await buildBookletPdf();
+        downloadBytes(bytes, bookletFilename());
+        toast("小冊子PDFを保存しました");
+      } catch (err) {
+        console.error(err);
+        toast("PDFの作成に失敗しました。別のファイルで試してください。");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function paintSlot(ctx, page, xPt, yPt, wPt, hPt, pxPerPt) {
+      if (!page || page.kind === "blank") return;
+      const source = state.sources[page.sourceIndex];
+      const pdfPage = await source.doc.getPage(page.pageIndex + 1);
+      const base = pdfPage.getViewport({ scale: 1 });
+      const srcW = page.crop ? base.width / 2 : base.width;
+      const slotW = wPt * pxPerPt;
+      const slotH = hPt * pxPerPt;
+      const scale = Math.min(slotW / srcW, slotH / base.height);
+      const viewport = pdfPage.getViewport({ scale });
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+      const pageCtx = canvas.getContext("2d", { alpha: false });
+      pageCtx.fillStyle = "#ffffff";
+      pageCtx.fillRect(0, 0, canvas.width, canvas.height);
+      await pdfPage.render({ canvasContext: pageCtx, viewport }).promise;
+      const leftW = page.crop ? Math.floor(canvas.width / 2) : 0;
+      const sx = page.crop === "right" ? leftW : 0;
+      const sw = page.crop ? (page.crop === "right" ? canvas.width - leftW : leftW) : canvas.width;
+      const dx = xPt * pxPerPt + (slotW - sw) / 2;
+      const dy = yPt * pxPerPt + (slotH - canvas.height) / 2;
+      ctx.drawImage(canvas, sx, 0, sw, canvas.height, dx, dy, sw, canvas.height);
+    }
+
+    async function printBooklet() {
+      if (blanksNeeded() !== 0 || !printablePages().length || state.busy) return;
+      const pages = printablePages();
+      const layout = computeLayout();
+      const spreads = bookletSpreads(pages.length, state.binding);
+      try {
+        setBusy("印刷用のページを描いています");
+        let pxW = Math.round(layout.paperW / 72 * 150);
+        let pxH = Math.round(layout.paperH / 72 * 150);
+        const maxEdge = 2800;
+        const edge = Math.max(pxW, pxH);
+        if (edge > maxEdge) {
+          const fit = maxEdge / edge;
+          pxW = Math.round(pxW * fit);
+          pxH = Math.round(pxH * fit);
+        }
+        const pxPerPt = pxW / layout.paperW;
+        const root = $("printRoot");
+        root.replaceChildren();
+        for (let i = 0; i < spreads.length; i++) {
+          setBusy("印刷用ページ " + (i + 1) + " / " + spreads.length);
+          const canvas = document.createElement("canvas");
+          canvas.width = pxW;
+          canvas.height = pxH;
+          const ctx = canvas.getContext("2d", { alpha: false });
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, pxW, pxH);
+          const spread = spreads[i];
+          await paintSlot(ctx, pages[spread.left], layout.offsetX, layout.offsetY, layout.slotW, layout.slotH, pxPerPt);
+          await paintSlot(ctx, pages[spread.right], layout.offsetX + layout.slotW + layout.gutter, layout.offsetY, layout.slotW, layout.slotH, pxPerPt);
+          let image = canvas;
+          if (spread.side === "back" && state.sheetFlip === "long") {
+            image = document.createElement("canvas");
+            image.width = canvas.width;
+            image.height = canvas.height;
+            const flipped = image.getContext("2d");
+            flipped.translate(image.width, image.height);
+            flipped.rotate(Math.PI);
+            flipped.drawImage(canvas, 0, 0);
+          }
+          const holder = document.createElement("div");
+          holder.className = "print-sheet";
+          const img = document.createElement("img");
+          img.src = image.toDataURL("image/jpeg", 0.92);
+          img.alt = "";
+          holder.appendChild(img);
+          root.appendChild(holder);
+          await new Promise((resolve) => setTimeout(resolve, 0));
+        }
+        setBusy(false);
+        document.body.classList.add("printing-sheets");
+        const flipNote = state.sheetFlip === "long"
+          ? "裏面は長辺とじ向けに180度回してあります。プリンタの両面は長辺とじ、"
+          : "プリンタの両面は短辺とじ、";
+        toast("用紙は " + describeLayout(layout) + "。向きは横、" + flipNote + "倍率は100%、プリンタ側の余白はなしにしてください。Edgeのシステムダイアログはエラーになります。");
+        window.print();
+      } catch (err) {
+        console.error(err);
+        toast("印刷用の画像を作れませんでした");
+        document.body.classList.remove("printing-sheets");
+        $("printRoot").replaceChildren();
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function clearDropMark() {
+      state.dragFrom = null;
+      document.querySelectorAll(".page-card").forEach((card) => {
+        card.classList.remove("drop-before", "drop-after", "is-dragging");
+      });
+    }
+
+    let pickMode = "replace";
+
+    function chooseFiles(input, mode) {
+      pickMode = mode;
+      input.click();
+    }
+
+    function bindEvents() {
+      $("pickFolder").addEventListener("click", () => chooseFiles($("folderInput"), "replace"));
+      $("pickFiles").addEventListener("click", () => chooseFiles($("fileInput"), "replace"));
+      $("addFolder").addEventListener("click", () => chooseFiles($("folderInput"), "append"));
+      $("addFiles").addEventListener("click", () => chooseFiles($("fileInput"), "append"));
+
+      $("folderInput").addEventListener("change", () => {
+        const files = [...$("folderInput").files];
+        $("folderInput").value = "";
+        if (pickMode === "append") addPdfs(files);
+        else loadPdfs(files);
+      });
+      $("fileInput").addEventListener("change", () => {
+        const files = [...$("fileInput").files];
+        $("fileInput").value = "";
+        if (pickMode === "append") addPdfs(files);
+        else loadPdfs(files);
+      });
+
+      $("bindLeft").addEventListener("click", () => {
+        state.binding = "left";
+        savePrefs();
+        render();
+      });
+      $("bindRight").addEventListener("click", () => {
+        state.binding = "right";
+        savePrefs();
+        render();
+      });
+      $("flipShort").addEventListener("click", () => {
+        state.sheetFlip = "short";
+        savePrefs();
+        render();
+      });
+      $("flipLong").addEventListener("click", () => {
+        state.sheetFlip = "long";
+        savePrefs();
+        render();
+      });
+      $("paperSelect").addEventListener("change", () => {
+        state.paper = $("paperSelect").value;
+        savePrefs();
+        render();
+      });
+      $("marginRange").addEventListener("input", () => setMargin($("marginRange").value));
+      $("marginMm").addEventListener("change", () => setMargin($("marginMm").value));
+      $("gutterRange").addEventListener("input", () => setGutter($("gutterRange").value));
+      $("gutterMm").addEventListener("change", () => setGutter($("gutterMm").value));
+
+      $("undoBtn").addEventListener("click", undo);
+      $("resetBtn").addEventListener("click", resetPages);
+      $("blankStart").addEventListener("click", () => insertBlanks(0, 1));
+      $("blankEnd").addEventListener("click", () => insertBlanks(state.pages.length, 1));
+      $("printBtn").addEventListener("click", printBooklet);
+      $("saveBtn").addEventListener("click", saveBooklet);
+
+      $("pagesPanel").addEventListener("click", (event) => {
+        const pad = event.target.closest("[data-pad]");
+        if (pad) {
+          padBlanks(pad.dataset.pad);
+          return;
+        }
+        const fileBtn = event.target.closest("[data-file-move]");
+        if (fileBtn) {
+          moveFile(Number(fileBtn.dataset.fileIndex), Number(fileBtn.dataset.fileMove));
+          return;
+        }
+        const actionBtn = event.target.closest("[data-action]");
+        if (!actionBtn) return;
+        const card = actionBtn.closest(".page-card");
+        const index = Number(card.dataset.index);
+        const action = actionBtn.dataset.action;
+        if (action === "prev") movePage(index, -1);
+        if (action === "next") movePage(index, 1);
+        if (action === "blank-after") insertBlanks(index + 1, 1);
+        if (action === "remove") removePage(index);
+        if (action === "skip") toggleSkip(index);
+        if (action === "split") splitSpread(index);
+      });
+
+      const pageList = $("pageList");
+      pageList.addEventListener("dragstart", (event) => {
+        const handle = event.target.closest("[data-drag]");
+        if (!handle) return;
+        const card = handle.closest(".page-card");
+        state.dragFrom = Number(card.dataset.index);
+        card.classList.add("is-dragging");
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", String(state.dragFrom));
+      });
+      pageList.addEventListener("dragover", (event) => {
+        const card = event.target.closest(".page-card");
+        if (!card || state.dragFrom === null) return;
+        event.preventDefault();
+        const rect = card.getBoundingClientRect();
+        const after = event.clientX > rect.left + rect.width / 2;
+        pageList.querySelectorAll(".page-card").forEach((item) => item.classList.remove("drop-before", "drop-after"));
+        card.classList.add(after ? "drop-after" : "drop-before");
+      });
+      pageList.addEventListener("drop", (event) => {
+        const card = event.target.closest(".page-card");
+        if (!card || state.dragFrom === null) return;
+        event.preventDefault();
+        const rect = card.getBoundingClientRect();
+        const after = event.clientX > rect.left + rect.width / 2;
+        let dest = Number(card.dataset.index) + (after ? 1 : 0);
+        const from = state.dragFrom;
+        if (from < dest) dest -= 1;
+        clearDropMark();
+        reorderPage(from, dest);
+      });
+      pageList.addEventListener("dragend", clearDropMark);
+
+      let dragDepth = 0;
+      document.addEventListener("dragenter", (event) => {
+        if (![...event.dataTransfer.types].includes("Files")) return;
+        dragDepth++;
+        $("dropLabel").textContent = state.sources.length ? "ドロップして末尾に追加" : "ここにドロップして読み込む";
+        document.body.classList.add("is-dragover");
+      });
+      document.addEventListener("dragover", (event) => {
+        if ([...event.dataTransfer.types].includes("Files")) event.preventDefault();
+      });
+      document.addEventListener("dragleave", () => {
+        dragDepth = Math.max(0, dragDepth - 1);
+        if (dragDepth === 0) document.body.classList.remove("is-dragover");
+      });
+      document.addEventListener("drop", (event) => {
+        if (![...event.dataTransfer.types].includes("Files")) return;
+        event.preventDefault();
+        dragDepth = 0;
+        document.body.classList.remove("is-dragover");
+        handleDrop(event).catch((err) => {
+          console.error(err);
+          toast("読み込みに失敗しました");
+        });
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
+          const tag = document.activeElement && document.activeElement.tagName;
+          if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+          event.preventDefault();
+          undo();
+        }
+      });
+
+      window.addEventListener("afterprint", () => {
+        document.body.classList.remove("printing-sheets");
+        $("printRoot").replaceChildren();
+      });
+    }
+
+    function assertSpreads() {
+      const sig = (binding, count) => bookletSpreads(count, binding).map((spread) => [spread.side, spread.left + 1, spread.right + 1]);
+      const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+      const left8 = [["front", 8, 1], ["back", 2, 7], ["front", 6, 3], ["back", 4, 5]];
+      const right8 = [["front", 1, 8], ["back", 7, 2], ["front", 3, 6], ["back", 5, 4]];
+      const left4 = [["front", 4, 1], ["back", 2, 3]];
+      if (!same(sig("left", 8), left8) || !same(sig("right", 8), right8) || !same(sig("left", 4), left4) || bookletSpreads(6, "left").length !== 0) {
+        throw new Error("面付けの計算が想定と違います");
+      }
+    }
+
+    function init() {
+      if (!window.pdfjsLib || !window.PDFLib) {
+        $("libError").hidden = false;
+        return;
+      }
+      assertSpreads();
+      pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER_SRC;
+      loadPrefs();
+      syncMarginInputs();
+      bindEvents();
+    }
+
+    init();
+  </script>
+</body>
+</html>
